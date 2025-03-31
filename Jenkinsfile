@@ -1,51 +1,46 @@
 pipeline {
     agent any
 
-    environment {
-        MY_VAR1 = 'InitialValue1'
-        MY_VAR2 = 'InitialValue2'
+    parameters {
+        string(name: 'USER', defaultValue: '', description: 'Enter a value for IP')
+        string(name: 'IP', defaultValue: '', description: 'Enter a value for IP')
     }
     stages {
-        stage('Print Environment Variables') {
+        stage('Clone repository') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build image') {
             steps {
                 script {
-                    echo "MY_VAR1 is: ${env.MY_VAR1}"
-                    echo "MY_VAR2 is: ${env.MY_VAR2}"
-                    echo "TEST1 is: ${env.TEST1}"
-                    echo "TEST2 is: ${env.TEST2}"
+                    app = docker.build("gagal1818/kiii-lab4")
                 }
             }
         }
 
-        // stage('Build image') {
-        //     steps {
-        //         script {
-        //             app = docker.build("gagal1818/kiii-lab4")
-        //         }
-        //     }
-        // }
+        stage('Push image') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+                        app.push("${env.BRANCH_NAME}-${env.BUILD_NUMBER}")
+                    }
+                }
+            }
+        }
 
-        // stage('Push image') {
-        //     steps {
-        //         script {
-        //             docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
-        //                 app.push("${env.BRANCH_NAME}-${env.BUILD_NUMBER}")
-        //             }
-        //         }
-        //     }
-        // }
-
-    // stage('Deploy') {
-    //     steps {
-    //         sshagent(['my-ssh-credentials']) {
-    //             sh """
-    //             ssh root@83-229-87-158 'docker pull gagal1818/kiii-lab4:${env.BRANCH_NAME}-${env.BUILD_NUMBER}'
-    //             ssh root@83-229-87-158 'docker stop my-container || true'  # Stop the existing container
-    //             ssh root@83-229-87-158 'docker rm my-container || true'    # Remove the stopped container
-    //             ssh root@83-229-87-158 'docker run -d --name my-container gagal1818/kiii-lab4:${env.BRANCH_NAME}-${env.BUILD_NUMBER}'  # Run new container
-    //             """
-    //         }
-    //     }
-    // }
+        stage('Deploy') {
+            steps {
+                sshagent(['my-ssh-credentials']) {
+                    sh """
+                    ssh ${params.USER}@${params.IP} 'docker pull gagal1818/kiii-lab4:${env.BRANCH_NAME}-${env.BUILD_NUMBER}'
+                    ssh ${params.USER}@${params.IP} 'docker stop my-container || true'  # Stop the existing container
+                    ssh ${params.USER}@${params.IP} 'docker rm my-container || true'    # Remove the stopped container
+                    ssh ${params.USER}@${params.IP} 'docker run -d --name my-container gagal1818/kiii-lab4:${env.BRANCH_NAME}-${env.BUILD_NUMBER}'  # Run new container
+                    """
+                }
+            }
+        }
     }
 }
