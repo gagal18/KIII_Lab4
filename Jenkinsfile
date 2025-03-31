@@ -8,6 +8,8 @@ node {
     }
     
     environment {
+        DISABLE_AUTH = 'true'
+        DB_ENGINE    = 'sqlite'
     }
     stage('Clone repository') {
         checkout scm
@@ -24,6 +26,11 @@ node {
         script {
             echo "Deploying with the following environment variables:"
             echo "SSH User: ${params.DEPLOY_USER}"
+            echo "SSH Server: ${env.BUILD_ID}"
+            sh "echo $ENV1" // prints default
+            withEnv(['ENV1=newvalue']) {
+                sh "echo $ENV1" // prints newvalue
+            }
             echo "SSH Server: ${params.DEPLOY_SERVER}"
             echo "SSH Key (base64 encoded): ${params.DEPLOY_SSH_PRIVATE_KEY?.length() > 0 ? 'Provided' : 'Not Provided'}"
         }
