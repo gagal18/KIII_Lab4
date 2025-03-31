@@ -21,13 +21,11 @@ node {
         }
     }
     stage('Deploy') {
-        steps {
-            script {
-                echo "Deploying with the following environment variables:"
-                echo "SSH User: ${params.DEPLOY_USER}"
-                echo "SSH Server: ${params.DEPLOY_SERVER}"
-                echo "SSH Key (base64 encoded): ${params.DEPLOY_SSH_PRIVATE_KEY?.length() > 0 ? 'Provided' : 'Not Provided'}"
-            }
+        script {
+            echo "Deploying with the following environment variables:"
+            echo "SSH User: ${params.DEPLOY_USER}"
+            echo "SSH Server: ${params.DEPLOY_SERVER}"
+            echo "SSH Key (base64 encoded): ${params.DEPLOY_SSH_PRIVATE_KEY?.length() > 0 ? 'Provided' : 'Not Provided'}"
         }
     }
 }
