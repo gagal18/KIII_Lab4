@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        DEPLOY_SERVER = 'your-server'
-    }
-
     stages {
         stage('Clone repository') {
             steps {
@@ -34,10 +30,10 @@ pipeline {
             steps {
                 sshagent(['my-ssh-credentials']) {
                     sh """
-                    ssh root@${DEPLOY_SERVER} 'docker pull gagal1818/kiii-lab4:${env.BRANCH_NAME}-${env.BUILD_NUMBER}'
-                    ssh root@${DEPLOY_SERVER} 'docker stop my-container || true'  # Stop the existing container
-                    ssh root@${DEPLOY_SERVER} 'docker rm my-container || true'    # Remove the stopped container
-                    ssh root@${DEPLOY_SERVER} 'docker run -d --name my-container gagal1818/kiii-lab4:${env.BRANCH_NAME}-${env.BUILD_NUMBER}'  # Run new container
+                    ssh root@83-229-87-158 'docker pull gagal1818/kiii-lab4:${env.BRANCH_NAME}-${env.BUILD_NUMBER}'
+                    ssh root@83-229-87-158 'docker stop my-container || true'  # Stop the existing container
+                    ssh root@83-229-87-158 'docker rm my-container || true'    # Remove the stopped container
+                    ssh root@83-229-87-158 'docker run -d --name my-container gagal1818/kiii-lab4:${env.BRANCH_NAME}-${env.BUILD_NUMBER}'  # Run new container
                     """
                 }
             }
