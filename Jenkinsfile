@@ -9,16 +9,6 @@ pipeline {
         IP = '83.229.87.158'
     }
     stages {
-        stage('Set environment variables for branch') {
-            steps {
-                script {
-                    if (env.BRANCH_NAME == 'master') {
-                        env.PORT = 8001
-                    }
-                    echo "Current Branch: ${env.BRANCH_NAME}, Docker Image: ${env.PORT}"
-                }
-            }
-        }
         stage('Clone repository') {
             steps {
                 checkout scm
@@ -42,7 +32,17 @@ pipeline {
                 }
             }
         }
-
+        stage('Set environment variables for branch') {
+            steps {
+                script {
+                    echo "${env.BRANCH_NAME}"
+                    if (env.BRANCH_NAME == 'master') {
+                        env.PORT = 8001
+                    }
+                    echo "Current Branch: ${env.BRANCH_NAME}, Docker Image: ${env.PORT}"
+                }
+            }
+        }
         stage('Deploy') {
             steps {
                 script {
