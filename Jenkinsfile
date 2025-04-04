@@ -15,7 +15,7 @@ pipeline {
                     if (env.BRANCH_NAME == 'dev') {
                         env.PORT = 8001
                     }
-                    echo "Current Branch: ${env.BRANCH_NAME}, Docker Image: ${env.DOCKER_IMAGE_NAME}"
+                    echo "Current Branch: ${env.BRANCH_NAME}, Docker Image: ${env.PORT}"
                 }
             }
         }
