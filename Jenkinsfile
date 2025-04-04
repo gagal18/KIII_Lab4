@@ -4,21 +4,11 @@ pipeline {
         githubPush()
     }
     environment {
-        PORT = 8002
+        ENV_NAME = "${env.BRANCH_NAME == "dev" ? 8002 : 8003}"
         USER = 'root'
         IP = '83.229.87.158'
     }
     stages {
-        stage('Set environment variables for branch') {
-            steps {
-                script {
-                    if (env.BRANCH_NAME == 'dev') {
-                        env.PORT = 8001
-                    }
-                    echo "Current Branch: ${env.BRANCH_NAME}, Docker Image: ${env.DOCKER_IMAGE_NAME}"
-                }
-            }
-        }
         stage('Clone repository') {
             steps {
                 checkout scm
@@ -42,7 +32,6 @@ pipeline {
                 }
             }
         }
-
         stage('Deploy') {
             steps {
                 script {
@@ -50,7 +39,7 @@ pipeline {
                     ssh ${env.USER}@${env.IP} 'docker pull gagal1818/kiii-lab4:${env.BRANCH_NAME}-${env.BUILD_NUMBER}'
                     ssh ${env.USER}@${env.IP} 'docker stop gagal1818_KIII_4${env.BRANCH_NAME} || true'
                     ssh ${env.USER}@${env.IP} 'docker rm gagal1818_KIII_4${env.BRANCH_NAME} || true'
-                    ssh ${env.USER}@${env.IP} 'docker run -d -p ${env.PORT}:80 --name gagal1818_KIII_4${env.BRANCH_NAME} gagal1818/kiii-lab4:${env.BRANCH_NAME}-${env.BUILD_NUMBER}'
+                    ssh ${env.USER}@${env.IP} 'docker run -d -p ${env.ENV_NAME}:80 --name gagal1818_KIII_4${env.BRANCH_NAME} gagal1818/kiii-lab4:${env.BRANCH_NAME}-${env.BUILD_NUMBER}'
                     """
                 }
             }
