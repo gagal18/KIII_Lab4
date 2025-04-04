@@ -3,11 +3,11 @@ pipeline {
     triggers {
         githubPush()
     }
-    environment {
-        ENV_NAME = "${env.BRANCH_NAME == "dev" ? 8002 : 8003}"
-        USER = 'root'
-        IP = '83.229.87.158'
-    }
+environment {
+    ENV_NAME = "${env.BRANCH_NAME == 'dev' ? 8002 : 8003}"
+    USER = credentials('KAMATURA_USER')
+    IP = credentials('KAMATURA_IP')
+}
     stages {
         stage('Clone repository') {
             steps {
