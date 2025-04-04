@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'USER', defaultValue: '', description: 'Enter a value for IP')
+        string(name: 'USER', defaultValue: '', description: 'Enter a value for USEca')
         string(name: 'IP', defaultValue: '', description: 'Enter a value for IP')
     }
     stages {
@@ -37,7 +37,7 @@ pipeline {
                     ssh ${params.USER}@${params.IP} 'docker pull gagal1818/kiii-lab4:${env.BRANCH_NAME}-${env.BUILD_NUMBER}'
                     ssh ${params.USER}@${params.IP} 'docker stop my-container || true'  # Stop the existing container
                     ssh ${params.USER}@${params.IP} 'docker rm my-container || true'    # Remove the stopped container
-                    ssh ${params.USER}@${params.IP} 'docker run -d --name my-container gagal1818/kiii-lab4:${env.BRANCH_NAME}-${env.BUILD_NUMBER}'  # Run new container
+                    ssh ${params.USER}@${params.IP} 'docker run -d -p 80:80 --name my-container gagal1818/kiii-lab4:${env.BRANCH_NAME}-${env.BUILD_NUMBER}'  # Run new container
                     """
                 }
             }
