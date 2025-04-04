@@ -1,11 +1,24 @@
 pipeline {
     agent any
-
-    parameters {
-        string(name: 'USER', defaultValue: '', description: 'Enter a value for USEca')
-        string(name: 'IP', defaultValue: '', description: 'Enter a value for IP')
+    triggers {
+        githubPush()
+    }
+    environment {
+        PORT = 8002
+        USER = 'root'
+        IP = '83.229.87.158'
     }
     stages {
+        stage('Set environment variables for branch') {
+            steps {
+                script {
+                    if (env.BRANCH_NAME == 'dev') {
+                        env.PORT = 8001
+                    }
+                    echo "Current Branch: ${env.BRANCH_NAME}, Docker Image: ${env.DOCKER_IMAGE_NAME}"
+                }
+            }
+        }
         stage('Clone repository') {
             steps {
                 checkout scm
@@ -15,7 +28,7 @@ pipeline {
         stage('Build image') {
             steps {
                 script {
-                    app = docker.build("gagal1818/kiii-lab4")
+                    app = docker.build('gagal1818/kiii-lab4')
                 }
             }
         }
@@ -32,12 +45,12 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                script{
+                script {
                     sh """
-                    ssh ${params.USER}@${params.IP} 'docker pull gagal1818/kiii-lab4:${env.BRANCH_NAME}-${env.BUILD_NUMBER}'
-                    ssh ${params.USER}@${params.IP} 'docker stop my-container || true'  # Stop the existing container
-                    ssh ${params.USER}@${params.IP} 'docker rm my-container || true'    # Remove the stopped container
-                    ssh ${params.USER}@${params.IP} 'docker run -d -p 80:80 --name my-container gagal1818/kiii-lab4:${env.BRANCH_NAME}-${env.BUILD_NUMBER}'  # Run new container
+                    ssh ${env.USER}@${env.IP} 'docker pull gagal1818/kiii-lab4:${env.BRANCH_NAME}-${env.BUILD_NUMBER}'
+                    ssh ${env.USER}@${env.IP} 'docker stop gagal1818_KIII_4${env.BRANCH_NAME} || true'
+                    ssh ${env.USER}@${env.IP} 'docker rm gagal1818_KIII_4${env.BRANCH_NAME} || true'
+                    ssh ${env.USER}@${env.IP} 'docker run -d -p ${env.PORT}:80 --name gagal1818_KIII_4${env.BRANCH_NAME} gagal1818/kiii-lab4:${env.BRANCH_NAME}-${env.BUILD_NUMBER}'
                     """
                 }
             }
