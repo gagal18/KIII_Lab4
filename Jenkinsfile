@@ -6,7 +6,7 @@ pipeline {
     environment {
         PORT = 8002
         USER = 'root'
-        IP = 83.229.87.158
+        IP = '83.229.87.158'
     }
     stages {
         stage('Set environment variables for branch') {
