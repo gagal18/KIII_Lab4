@@ -4,7 +4,7 @@ pipeline {
         githubPush()
     }
     environment {
-        PORT = 8002
+        ENV_NAME = "${env.BRANCH_NAME == "develop" ? 8002 : 8003}"
         USER = 'root'
         IP = '83.229.87.158'
     }
@@ -32,21 +32,6 @@ pipeline {
                 }
             }
         }
-        stage('Set environment variables for branch') {
-            steps {
-                script {
-                    echo "Before check, PORT: ${env.PORT}"
-                    if (env.BRANCH_NAME == 'master') {
-                        echo 'Setting PORT for master branch'
-                        env.PORT = 8001
-} else {
-                        echo 'Setting default PORT for other branches'
-                        env.PORT = 8002
-                    }
-                    echo "After check, PORT: ${env.PORT}"
-                }
-            }
-        }
         stage('Deploy') {
             steps {
                 script {
@@ -54,7 +39,7 @@ pipeline {
                     ssh ${env.USER}@${env.IP} 'docker pull gagal1818/kiii-lab4:${env.BRANCH_NAME}-${env.BUILD_NUMBER}'
                     ssh ${env.USER}@${env.IP} 'docker stop gagal1818_KIII_4${env.BRANCH_NAME} || true'
                     ssh ${env.USER}@${env.IP} 'docker rm gagal1818_KIII_4${env.BRANCH_NAME} || true'
-                    ssh ${env.USER}@${env.IP} 'docker run -d -p ${env.PORT}:80 --name gagal1818_KIII_4${env.BRANCH_NAME} gagal1818/kiii-lab4:${env.BRANCH_NAME}-${env.BUILD_NUMBER}'
+                    ssh ${env.USER}@${env.IP} 'docker run -d -p ${env.ENV_NAME}:80 --name gagal1818_KIII_4${env.BRANCH_NAME} gagal1818/kiii-lab4:${env.BRANCH_NAME}-${env.BUILD_NUMBER}'
                     """
                 }
             }
