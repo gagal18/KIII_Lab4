@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+    triggers {
+        githubPush()
+    }
     parameters {
         string(name: 'USER', defaultValue: '', description: 'Enter a value for USEca')
         string(name: 'IP', defaultValue: '', description: 'Enter a value for IP')
