@@ -12,7 +12,7 @@ pipeline {
         stage('Set environment variables for branch') {
             steps {
                 script {
-                    if (env.BRANCH_NAME == 'dev') {
+                    if (env.BRANCH_NAME == 'master') {
                         env.PORT = 8001
                     }
                     echo "Current Branch: ${env.BRANCH_NAME}, Docker Image: ${env.PORT}"
