@@ -4,7 +4,7 @@ pipeline {
         githubPush()
     }
     environment {
-        ENV_NAME = "${env.BRANCH_NAME == "develop" ? 8002 : 8003}"
+        ENV_NAME = "${env.BRANCH_NAME == "dev" ? 8002 : 8003}"
         USER = 'root'
         IP = '83.229.87.158'
     }
