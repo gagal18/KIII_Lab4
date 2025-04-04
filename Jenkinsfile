@@ -35,11 +35,15 @@ pipeline {
         stage('Set environment variables for branch') {
             steps {
                 script {
-                    echo "${env.BRANCH_NAME}"
+                    echo "Before check, PORT: ${env.PORT}"
                     if (env.BRANCH_NAME == 'master') {
+                        echo 'Setting PORT for master branch'
                         env.PORT = 8001
+} else {
+                        echo 'Setting default PORT for other branches'
+                        env.PORT = 8002
                     }
-                    echo "Current Branch: ${env.BRANCH_NAME}, Docker Image: ${env.PORT}"
+                    echo "After check, PORT: ${env.PORT}"
                 }
             }
         }
