@@ -32,7 +32,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sshagent(['my-ssh-credentials']) {
+                script{
                     sh """
                     ssh ${params.USER}@${params.IP} 'docker pull gagal1818/kiii-lab4:${env.BRANCH_NAME}-${env.BUILD_NUMBER}'
                     ssh ${params.USER}@${params.IP} 'docker stop my-container || true'  # Stop the existing container
